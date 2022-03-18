@@ -26,9 +26,7 @@ def get_chat_id(update, context):
 
 def start(update, context):
     update.message.reply_text(
-        """Hello! This is Amharic Senetiment Analysis servery bot.
-        
-        /hate
+        """Hello! This is Amharic Senetiment Analysis servery bot.\n/continue
         """)
 
 
