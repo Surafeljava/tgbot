@@ -94,7 +94,7 @@ def query_handler(update, context):
     query = update.callback_query.data
     update.callback_query.answer()
 
-    print("Question: ", update.callback_query.question())
+    print("Question: ", query)
 
     user = update.message.from_user
     userName = user['username']
