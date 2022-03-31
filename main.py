@@ -8,7 +8,7 @@ import pandas as pd
 import random
 
 import os
-PORT = int(os.environ.get('PORT', 5940))
+PORT = int(os.environ.get('PORT', 80))
 
 load_dotenv()
 
