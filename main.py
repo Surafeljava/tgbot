@@ -113,7 +113,7 @@ def query_handler(update, context):
     context.bot.send_message(
         chat_id=update.effective_chat.id, text="""
         Do you want to continue?\nYes -> /continue\nNo -> /exit
-        """+update.callback_query.question())
+        """)
 
 
 def exit(update, context):
