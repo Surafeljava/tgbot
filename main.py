@@ -104,7 +104,7 @@ def query_handler(update, context):
     data = df["sentence"]
     # Write to the data here
 
-    if("hate" in query.split()[0]):
+    if("hate" in query):
 
         print("Hate Chosen")
     else:
@@ -150,8 +150,8 @@ def hate_speech(update, context):
         print("IN the loop")
         nxt = random.randint(0, len(data)-1)
 
-    buttons = [[InlineKeyboardButton("Hate Speech", callback_data="hate,"+data[nxt])], [
-        InlineKeyboardButton("Not Hate Speech", callback_data="not_hate,"+data[nxt])]]
+    buttons = [[InlineKeyboardButton("Hate Speech", callback_data="hate")], [
+        InlineKeyboardButton("Not Hate Speech", callback_data="not_hate")]]
 
     context.bot.send_message(
         chat_id=update.effective_chat.id, reply_markup=InlineKeyboardMarkup(buttons), text=data[nxt],)
