@@ -94,11 +94,18 @@ def query_handler(update, context):
     query = update.callback_query.data
     update.callback_query.answer()
 
+    print("Question: ", update.callback_query.question())
+
+    user = update.message.from_user
+    userName = user['username']
+    udf = pd.read_csv("./data/users.csv")
+
     df = pd.read_csv("./data/data.csv")
-    data = df["0"]
+    data = df["sentence"]
     # Write to the data here
 
     if("hate" in query):
+
         print("Hate Chosen")
     else:
         print("Not Hate Chosen")
@@ -106,7 +113,7 @@ def query_handler(update, context):
     context.bot.send_message(
         chat_id=update.effective_chat.id, text="""
         Do you want to continue?\nYes -> /continue\nNo -> /exit
-        """)
+        """+update.callback_query.question())
 
 
 def exit(update, context):
@@ -114,11 +121,31 @@ def exit(update, context):
         """Thank you for your kind contribution.""")
 
 
+def checkIfInList(d, l):
+    for i in l:
+        if i == d:
+            return True
+
+    return False
+
+
 def hate_speech(update, context):
+    user = update.message.from_user
+    userName = user['username']
+    udf = pd.read_csv("./data/users.csv")
+
+    userChecked = []
+
+    if userName in udf.columns:
+        userChecked = udf[userName]
+
     df = pd.read_csv("./data/data.csv")
-    data = df["0"]
+    data = df["sentence"]
 
     nxt = random.randint(0, len(data)-1)
+
+    while(data[nxt], userChecked):
+        nxt = random.randint(0, len(data)-1)
 
     buttons = [[InlineKeyboardButton("Hate Speech", callback_data="hate")], [
         InlineKeyboardButton("Not Hate Speech", callback_data="not_hate")]]
@@ -147,17 +174,6 @@ def main():
         content, pass_chat_data=True, pass_user_data=True))
     disp.add_handler(MessageHandler(
         Filters.text, handle_user_msg))
-
-    # changes
-    # https: // amharic-tgbot.herokuapp.com/
-
-    # updater.start_webhook(listen="0.0.0.0",
-    #                       port=int(PORT),
-    #                       url_path=API_KEY)
-    # updater.bot.setWebhook('https://amharic-tgbot.herokuapp.com/' + API_KEY)
-
-    # # updater.start_polling()
-    # updater.idle()
 
     updater.start_webhook(listen="0.0.0.0", port=PORT,
                           url_path=API_KEY, webhook_url=APP_NAME + API_KEY)
