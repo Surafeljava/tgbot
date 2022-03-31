@@ -7,6 +7,9 @@ from dotenv import load_dotenv
 import pandas as pd
 import random
 
+import os
+PORT = int(os.environ.get('PORT', 5940))
+
 load_dotenv()
 
 API_KEY = os.getenv('API_KEY')
@@ -139,6 +142,13 @@ disp.add_handler(telegram.ext.PollHandler(
     content, pass_chat_data=True, pass_user_data=True))
 disp.add_handler(telegram.ext.MessageHandler(
     telegram.ext.Filters.text, handle_user_msg))
+
+# https: // amharic-tgbot.herokuapp.com/
+
+updater.start_webhook(listen="0.0.0.0",
+                      port=int(PORT),
+                      url_path=API_KEY)
+updater.bot.setWebhook('https://amharic-tgbot.herokuapp.com/' + API_KEY)
 
 updater.start_polling()
 updater.idle()
