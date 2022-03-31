@@ -147,6 +147,7 @@ def hate_speech(update, context):
     nxt = random.randint(0, len(data)-1)
 
     while(data[nxt], userChecked):
+        print("IN the loop")
         nxt = random.randint(0, len(data)-1)
 
     buttons = [[InlineKeyboardButton("Hate Speech", callback_data="hate")], [
