@@ -134,6 +134,8 @@ def hate_speech(update, context):
     userName = user['username']
     udf = pd.read_csv("./data/users.csv")
 
+    print(udf.head())
+
     userChecked = []
 
     if userName in udf.columns:
