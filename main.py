@@ -1,7 +1,7 @@
 from cgitb import text
 import os
 import telebot
-import telegram.ext
+from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, PollHandler, CallbackQueryHandler
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, KeyboardButton, Poll, ReplyKeyboardMarkup, Update
 from dotenv import load_dotenv
 import pandas as pd
@@ -60,14 +60,14 @@ def is_answer_correct(update):
     return ret
 
 
-def poll(update, context):
-    c_id = get_chat_id(update, context)
-    q = 'What is the capital of Italy?'
-    answers = ['Rome', 'London', 'Amsterdam']
-    message = context.bot.send_poll(
-        chat_id=c_id, question=q, options=answers, type=Poll.QUIZ, correct_option_id=0,
-        explanation='Well, honestly that depends on what you eat', explanation_parse_mode=telegram.ParseMode.MARKDOWN_V2,
-        open_period=15)
+# def poll(update, context):
+#     c_id = get_chat_id(update, context)
+#     q = 'What is the capital of Italy?'
+#     answers = ['Rome', 'London', 'Amsterdam']
+#     message = context.bot.send_poll(
+#         chat_id=c_id, question=q, options=answers, type=Poll.QUIZ, correct_option_id=0,
+#         explanation='Well, honestly that depends on what you eat', explanation_parse_mode=telegram.ParseMode.MARKDOWN_V2,
+#         open_period=15)
 
 
 def content(update, context):
@@ -127,28 +127,41 @@ def hate_speech(update, context):
         chat_id=update.effective_chat.id, reply_markup=InlineKeyboardMarkup(buttons), text=data[nxt],)
 
 
-updater = telegram.ext.Updater(API_KEY, use_context=True)
-disp = updater.dispatcher
+def main():
+    """Starts the bot."""
+    APP_NAME = 'https://amharic-tgbot.herokuapp.com/'  # Edit the heroku app-name
 
-disp.add_handler(telegram.ext.CommandHandler("start", start))
-disp.add_handler(telegram.ext.CommandHandler("help", help))
-disp.add_handler(telegram.ext.CommandHandler("poll", poll))
-disp.add_handler(telegram.ext.CommandHandler("exit", exit))
-disp.add_handler(telegram.ext.CommandHandler("continue", hate_speech))
-disp.add_handler(telegram.ext.CallbackQueryHandler(query_handler))
-disp.add_handler(telegram.ext.CommandHandler(
-    "hate_classify", hate_speech_classify))
-disp.add_handler(telegram.ext.PollHandler(
-    content, pass_chat_data=True, pass_user_data=True))
-disp.add_handler(telegram.ext.MessageHandler(
-    telegram.ext.Filters.text, handle_user_msg))
+    updater = Updater(API_KEY, use_context=True)
 
-# https: // amharic-tgbot.herokuapp.com/
+    disp = updater.dispatcher
 
-updater.start_webhook(listen="0.0.0.0",
-                      port=int(PORT),
-                      url_path=API_KEY)
-updater.bot.setWebhook('https://amharic-tgbot.herokuapp.com/' + API_KEY)
+    disp.add_handler(CommandHandler("start", start))
+    disp.add_handler(CommandHandler("help", help))
+    # disp.add_handler(CommandHandler("poll", poll))
+    disp.add_handler(CommandHandler("exit", exit))
+    disp.add_handler(CommandHandler("continue", hate_speech))
+    disp.add_handler(CallbackQueryHandler(query_handler))
+    disp.add_handler(CommandHandler(
+        "hate_classify", hate_speech_classify))
+    disp.add_handler(PollHandler(
+        content, pass_chat_data=True, pass_user_data=True))
+    disp.add_handler(MessageHandler(
+        Filters.text, handle_user_msg))
 
-# updater.start_polling()
-updater.idle()
+    # https: // amharic-tgbot.herokuapp.com/
+
+    # updater.start_webhook(listen="0.0.0.0",
+    #                       port=int(PORT),
+    #                       url_path=API_KEY)
+    # updater.bot.setWebhook('https://amharic-tgbot.herokuapp.com/' + API_KEY)
+
+    # # updater.start_polling()
+    # updater.idle()
+
+    updater.start_webhook(listen="0.0.0.0", port=PORT,
+                          url_path=API_KEY, webhook_url=APP_NAME + API_KEY)
+    updater.idle()
+
+
+if __name__ == '__main__':
+    main()
