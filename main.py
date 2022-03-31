@@ -150,5 +150,5 @@ updater.start_webhook(listen="0.0.0.0",
                       url_path=API_KEY)
 updater.bot.setWebhook('https://amharic-tgbot.herokuapp.com/' + API_KEY)
 
-updater.start_polling()
+# updater.start_polling()
 updater.idle()
