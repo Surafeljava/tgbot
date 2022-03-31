@@ -148,6 +148,7 @@ def main():
     disp.add_handler(MessageHandler(
         Filters.text, handle_user_msg))
 
+    # changes
     # https: // amharic-tgbot.herokuapp.com/
 
     # updater.start_webhook(listen="0.0.0.0",
