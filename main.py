@@ -102,7 +102,7 @@ def query_handler(update, context):
     print("Username: ", userName)
 
     message = update.callback_query.message
-    print("Message: ", message)
+    print("Message: ", message['text'])
 
     udf = pd.read_csv("./data/users.csv")
 
