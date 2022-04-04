@@ -104,7 +104,7 @@ def query_handler(update, context):
 
     udf = pd.read_csv("./data/users.csv")
     print(udf)
-    print(udf['abebe'])
+    print(udf['abebe'][0])
 
     df = pd.read_csv("./data/data.csv")
     data = df["sentence"]
