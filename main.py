@@ -18,8 +18,8 @@ API_KEY = os.getenv('API_KEY')
 GITHUB_TOKEN = os.getenv('GITHUB_TOKEN')
 REPO_NAME = os.getenv('REPO_NAME')
 
-# github = Github(GITHUB_TOKEN)
-github = Github("surafelk27@gmail.com", "Surajava27")
+github = Github(GITHUB_TOKEN)
+# github = Github("surafelk27@gmail.com", "Surajava27")
 repository = github.get_user().get_repo(REPO_NAME)
 
 
