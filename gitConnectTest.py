@@ -1,27 +1,19 @@
+from dotenv import load_dotenv
+import os
 from github import Github
-import pandas as pd
 
-github = Github('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')
-repository = github.get_user().get_repo('amhbotdata')
+load_dotenv()
 
-df = pd.read_csv('./data/users.csv')
-
-# print(type(df))
-# print(df.to_string(index=False))
-
-# df.to_csv('./data/users.csv', encoding='utf-8', index=False)
-# path in the repository
-# filename = 'test.csv'
-# # create with commit message
-# f = repository.create_file(
-#     filename, "create_file via PyGithub", df.to_csv(sep=',', index=False))
+API_KEY = os.getenv('API_KEY')
+GITHUB_TOKEN = os.getenv('GITHUB_TOKEN')
+REPO_NAME = os.getenv('REPO_NAME')
 
 
-# path in the repository
-filename = 'test.csv'
-file = repository.get_contents(filename)
-# udf = pd.read_csv(file)
-# print(udf.head())
-print(file.download_url)
+print(GITHUB_TOKEN)
+# github = Github(GITHUB_TOKEN)
+github = Github(GITHUB_TOKEN)
 
-print(file.decoded_content.decode())
+# print(github)
+repository = github.get_user().get_repo(REPO_NAME)
+
+print(repository.owner)
