@@ -99,7 +99,7 @@ def updateTheAnswers(num, question, answer):
 
     if num in df.columns:
         ans = df[num]
-        all = ans.split()
+        all = str(ans).split(' ')
         all.append(answer)
         df[num] = ' '.join(all)
 
@@ -119,7 +119,7 @@ def updateTheUsers(userName, num):
     udf = pd.read_csv(userFileName)
 
     if userName in udf.columns:
-        userChecked = udf[userName][0].split()
+        userChecked = str(udf[userName][0]).split(' ')
 
         # add new value to this cell
         userChecked.append(num)
