@@ -18,7 +18,7 @@ API_KEY = os.getenv('API_KEY')
 GITHUB_TOKEN = os.getenv('GITHUB_TOKEN')
 REPO_NAME = os.getenv('REPO_NAME')
 
-github = Github(login_or_token=GITHUB_TOKEN)
+github = Github(GITHUB_TOKEN)
 repository = github.get_user().get_repo(REPO_NAME)
 
 
