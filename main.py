@@ -18,9 +18,9 @@ API_KEY = os.getenv('API_KEY')
 GITHUB_TOKEN = os.getenv('GITHUB_TOKEN')
 REPO_NAME = os.getenv('REPO_NAME')
 
-# github = Github(GITHUB_TOKEN)
-github = Github("Surafeljava", "Surajava27",
-                'https://api.github.com/Surafeljava')
+github = Github(GITHUB_TOKEN)
+# github = Github("Surafeljava", "Surajava27",
+#                 'https://api.github.com/Surafeljava')
 
 # print(github)
 repository = github.get_user().get_repo(REPO_NAME)
