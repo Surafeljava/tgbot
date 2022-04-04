@@ -94,17 +94,17 @@ def query_handler(update, context):
     query = update.callback_query.data
     update.callback_query.answer()
 
-    print("Question: ", query)
-
     user = update.callback_query.from_user
     userName = user['username']
-    print("User: ", user)
-    print("Username: ", userName)
-
     message = update.callback_query.message
-    print("Message: ", message['text'])
+    question = message['text']
+
+    print("Username: ", userName)
+    print("Question: ", question)
 
     udf = pd.read_csv("./data/users.csv")
+    print(udf)
+    print(udf['abebe'])
 
     df = pd.read_csv("./data/data.csv")
     data = df["sentence"]
