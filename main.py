@@ -18,8 +18,9 @@ API_KEY = os.getenv('API_KEY')
 GITHUB_TOKEN = os.getenv('GITHUB_TOKEN')
 REPO_NAME = os.getenv('REPO_NAME')
 
-github = Github('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')
-repository = github.get_user().get_repo('amhbotdata')
+# github = Github(GITHUB_TOKEN)
+github = Github("surafelk27@gmail.com", "Surajava27")
+repository = github.get_user().get_repo(REPO_NAME)
 
 
 def get_chat_id(update, context):
