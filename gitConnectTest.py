@@ -1,7 +1,7 @@
 from github import Github
 import pandas as pd
 
-github = Github('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')
+github = Github('gh')
 repository = github.get_user().get_repo('amhbotdata')
 
 df = pd.read_csv('./data/users.csv')
