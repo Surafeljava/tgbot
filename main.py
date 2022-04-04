@@ -7,12 +7,19 @@ from dotenv import load_dotenv
 import pandas as pd
 import random
 
+from github import Github
+
 import os
 PORT = int(os.environ.get('PORT', 80))
 
 load_dotenv()
 
 API_KEY = os.getenv('API_KEY')
+GITHUB_TOKEN = os.getenv('GITHUB_TOKEN')
+REPO_NAME = os.getenv('REPO_NAME')
+
+github = Github(GITHUB_TOKEN)
+repository = github.get_user().get_repo(REPO_NAME)
 
 
 def get_chat_id(update, context):
@@ -60,26 +67,6 @@ def is_answer_correct(update):
     return ret
 
 
-# def poll(update, context):
-#     c_id = get_chat_id(update, context)
-#     q = 'What is the capital of Italy?'
-#     answers = ['Rome', 'London', 'Amsterdam']
-#     message = context.bot.send_poll(
-#         chat_id=c_id, question=q, options=answers, type=Poll.QUIZ, correct_option_id=0,
-#         explanation='Well, honestly that depends on what you eat', explanation_parse_mode=telegram.ParseMode.MARKDOWN_V2,
-#         open_period=15)
-
-
-def content(update, context):
-    c_id = get_chat_id(update, context)
-
-    q = 'What is the capital of Italy?'
-    answers = ['Rome', 'London', 'Amsterdam']
-    message = context.bot.send_poll(
-        chat_id=c_id, question=q, options=answers, type=Poll.QUIZ, correct_option_id=0)
-    # update.message.reply_text("This is content information")
-
-
 def handle_user_msg(update, context):
     update.message.reply_text(f"Your message is {update.message.text}.")
 
@@ -91,11 +78,12 @@ def hate_speech_classify(update, context):
 
 
 def updateTheAnswers(num, question, answer):
-    ansFileName = './data/answers.csv'
+    # ansFileName = './data/answers.csv'
+    ansFileName = 'answers.csv'
 
-    df = pd.read_csv(ansFileName)
-
-    print(question)
+    # df = pd.read_csv(ansFileName)
+    file = repository.get_contents(ansFileName)
+    df = pd.read_csv(file.download_url)
 
     if num in df.columns:
         ans = df[num]
@@ -104,19 +92,26 @@ def updateTheAnswers(num, question, answer):
         df[num] = ' '.join(all)
 
         # save to csv file (updating the existing file)
-        df.to_csv(ansFileName, encoding='utf-8', index=False)
+        # df.to_csv(ansFileName, encoding='utf-8', index=False)
+        repository.update_file(
+            ansFileName, "Updating Answer", df.to_csv(sep=',', index=False))
     else:
         df[num] = answer
 
         # save to csv file (updating the existing file)
-        df.to_csv(ansFileName, encoding='utf-8', index=False)
+        # df.to_csv(ansFileName, encoding='utf-8', index=False)
+        repository.update_file(
+            ansFileName, "Updating Answer", df.to_csv(sep=',', index=False))
 
 
 def updateTheUsers(userName, num):
 
-    userFileName = './data/users.csv'
+    # userFileName = './data/users.csv'
+    userFileName = 'users.csv'
 
-    udf = pd.read_csv(userFileName)
+    # udf = pd.read_csv(userFileName)
+    file = repository.get_contents(userFileName)
+    udf = pd.read_csv(file.download_url)
 
     if userName in udf.columns:
         userChecked = str(udf[userName][0]).split(' ')
@@ -126,21 +121,22 @@ def updateTheUsers(userName, num):
         udf[userName] = ' '.join(userChecked)
 
         # save to csv file (updating the existing file)
-        udf.to_csv(userFileName, encoding='utf-8', index=False)
+        # udf.to_csv(userFileName, encoding='utf-8', index=False)
+        repository.update_file(
+            userFileName, "Updating User", udf.to_csv(sep=',', index=False))
     else:
         # lets add the username
         udf[userName] = [num]
 
         # save to csv file (updating the existing file)
-        udf.to_csv(userFileName, encoding='utf-8', index=False)
+        # udf.to_csv(userFileName, encoding='utf-8', index=False)
+        repository.update_file(
+            userFileName, "Updating User", udf.to_csv(sep=',', index=False))
 
 
 def query_handler(update, context):
     query = update.callback_query.data
     update.callback_query.answer()
-
-    userFileName = './data/users.csv'
-    dataFileName = './data/data.csv'
 
     user = update.callback_query.from_user
     userName = user['username']
@@ -148,10 +144,6 @@ def query_handler(update, context):
     question = ' '.join(message['text'].split()[1:])
     num = message['text'].split()[0]
 
-    udf = pd.read_csv(userFileName)
-
-    df = pd.read_csv(dataFileName)
-    data = df["sentence"]
     choosen = ''
 
     if("hate" in query):
@@ -186,9 +178,12 @@ def checkIfInList(d, l):
 
 def checkIfQuestionFullyAnnotated(num):
 
-    ansFileName = './data/answers.csv'
+    # ansFileName = './data/answers.csv'
+    ansFileName = 'answers.csv'
 
-    df = pd.read_csv(ansFileName)
+    # df = pd.read_csv(ansFileName)
+    file = repository.get_contents(ansFileName)
+    df = pd.read_csv(file.download_url)
 
     if num in df.columns:
         # check if full
@@ -204,7 +199,19 @@ def checkIfQuestionFullyAnnotated(num):
 def hate_speech(update, context):
     user = update.message.from_user
     userName = user['username']
-    udf = pd.read_csv("./data/users.csv")
+
+    # userFileName = './data/users.csv'
+    # dataFileName = './data/data.csv'
+
+    userFileName = 'users.csv'
+    file = repository.get_contents(userFileName)
+    udf = pd.read_csv(file.download_url)
+
+    dataFileName = 'data.csv'
+    file = repository.get_contents(dataFileName)
+    df = pd.read_csv(file.download_url)
+
+    # udf = pd.read_csv("./data/users.csv")
 
     # print(udf.head())
 
@@ -215,7 +222,7 @@ def hate_speech(update, context):
     if userName in udf.columns:
         userChecked = str(udf[userName][0]).split(' ')
 
-    df = pd.read_csv("./data/data.csv")
+    # df = pd.read_csv("./data/data.csv")
     data = df["sentence"]
 
     nxt = random.randint(0, len(data)-1)
@@ -240,14 +247,11 @@ def main():
 
     disp.add_handler(CommandHandler("start", start))
     disp.add_handler(CommandHandler("help", help))
-    # disp.add_handler(CommandHandler("poll", poll))
     disp.add_handler(CommandHandler("exit", exit))
     disp.add_handler(CommandHandler("continue", hate_speech))
     disp.add_handler(CallbackQueryHandler(query_handler))
     disp.add_handler(CommandHandler(
         "hate_classify", hate_speech_classify))
-    disp.add_handler(PollHandler(
-        content, pass_chat_data=True, pass_user_data=True))
     disp.add_handler(MessageHandler(
         Filters.text, handle_user_msg))
 
