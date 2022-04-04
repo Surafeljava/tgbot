@@ -210,8 +210,10 @@ def hate_speech(update, context):
 
     userChecked = []
 
+    print(userName)
+
     if userName in udf.columns:
-        userChecked = udf[userName][0].split()
+        userChecked = str(udf[userName][0]).split(' ')
 
     df = pd.read_csv("./data/data.csv")
     data = df["sentence"]
