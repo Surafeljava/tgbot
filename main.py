@@ -13,6 +13,14 @@ from github import Github
 import dropbox
 
 import os
+
+load_dotenv()
+
+API_KEY = os.getenv('API_KEY')
+GITHUB_TOKEN = os.getenv('GITHUB_TOKEN')
+REPO_NAME = os.getenv('REPO_NAME')
+DROPBOX_TOKEN = os.getenv('DROPBOX_TOKEN')
+
 PORT = int(os.environ.get('PORT', 80))
 
 ##########################
@@ -29,21 +37,15 @@ client = gspread.authorize(creds)
 
 ########################
 
-load_dotenv()
 
-API_KEY = os.getenv('API_KEY')
-GITHUB_TOKEN = os.getenv('GITHUB_TOKEN')
-REPO_NAME = os.getenv('REPO_NAME')
-DROPBOX_TOKEN = os.getenv('DROPBOX_TOKEN')
+# github = Github(GITHUB_TOKEN)
+# # github = Github("Surafeljava", "Surajava27",
+# #                 'https://api.github.com/Surafeljava')
 
-github = Github(GITHUB_TOKEN)
-# github = Github("Surafeljava", "Surajava27",
-#                 'https://api.github.com/Surafeljava')
+# # print(github)
+# repository = github.get_user().get_repo(REPO_NAME)
 
-# print(github)
-repository = github.get_user().get_repo(REPO_NAME)
-
-dbx = dropbox.Dropbox(DROPBOX_TOKEN)
+# dbx = dropbox.Dropbox(DROPBOX_TOKEN)
 
 
 def get_chat_id(update, context):
