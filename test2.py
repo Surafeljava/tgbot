@@ -13,7 +13,7 @@ creds = ServiceAccountCredentials.from_json_keyfile_name(
 client = gspread.authorize(creds)
 
 # get the instance of the Spreadsheet
-sheet = client.open('answers')
+sheet = client.open('users')
 
 # get the first sheet of the Spreadsheet
 sheet_instance = sheet.get_worksheet(0)
@@ -30,7 +30,7 @@ records_df = pd.DataFrame.from_dict(records_data)
 # print(records_df.head())
 
 
-print(records_df.columns.get_loc("2"))
+# print(records_df.columns.get_loc("2"))
 
 # sheet_instance.update_cell(2, 2, "0 1 0")
 # sheet_instance.insert_cols([[4, 2]], 3)
@@ -38,4 +38,6 @@ print(records_df.columns.get_loc("2"))
 print(records_df.size)
 print(len(records_df.columns))
 
-sheet_instance.update_cell(3, 2, 'Abebe')
+# sheet_instance.update_cell(3, 2, 'Abebe')
+
+print("surafel_kindu" in records_df.columns)

@@ -171,6 +171,8 @@ def updateTheUsers(userName, num):
         # repository.update_file(
         #     userFileName, "Updating User", udf.to_csv(sep=',', index=False))
 
+        print(d)
+
         cl = udf.columns.get_loc(userName)
         sheet_instance.update_cell(2, cl, d)
     else:
