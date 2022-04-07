@@ -1,3 +1,5 @@
+from oauth2client.service_account import ServiceAccountCredentials
+import gspread
 from cgitb import text
 import os
 import telebot
@@ -8,15 +10,31 @@ import pandas as pd
 import random
 
 from github import Github
+import dropbox
 
 import os
 PORT = int(os.environ.get('PORT', 80))
+
+##########################
+
+scope = ['https://spreadsheets.google.com/feeds',
+         'https://www.googleapis.com/auth/drive']
+
+# add credentials to the account
+creds = ServiceAccountCredentials.from_json_keyfile_name(
+    'amh-bot-data-ba5ef1f539fe.json', scope)
+
+# authorize the clientsheet
+client = gspread.authorize(creds)
+
+########################
 
 load_dotenv()
 
 API_KEY = os.getenv('API_KEY')
 GITHUB_TOKEN = os.getenv('GITHUB_TOKEN')
 REPO_NAME = os.getenv('REPO_NAME')
+DROPBOX_TOKEN = os.getenv('DROPBOX_TOKEN')
 
 github = Github(GITHUB_TOKEN)
 # github = Github("Surafeljava", "Surajava27",
@@ -24,6 +42,8 @@ github = Github(GITHUB_TOKEN)
 
 # print(github)
 repository = github.get_user().get_repo(REPO_NAME)
+
+dbx = dropbox.Dropbox(DROPBOX_TOKEN)
 
 
 def get_chat_id(update, context):
@@ -86,8 +106,13 @@ def updateTheAnswers(num, question, answer):
     ansFileName = 'answers.csv'
 
     # df = pd.read_csv(ansFileName)
-    file = repository.get_contents(ansFileName)
-    df = pd.read_csv(file.download_url)
+    # file = repository.get_contents(ansFileName)
+    # df = pd.read_csv(file.download_url)
+
+    sheet = client.open('answers')
+    sheet_instance = sheet.get_worksheet(0)
+    records_data = sheet_instance.get_all_records()
+    df = pd.DataFrame.from_dict(records_data)
 
     if num in df.columns:
         ans = df[num]
@@ -97,15 +122,23 @@ def updateTheAnswers(num, question, answer):
 
         # save to csv file (updating the existing file)
         # df.to_csv(ansFileName, encoding='utf-8', index=False)
-        repository.update_file(
-            ansFileName, "Updating Answer", df.to_csv(sep=',', index=False))
+        # repository.update_file(
+        #     ansFileName, "Updating Answer", df.to_csv(sep=',', index=False))
+
+        cl = df.columns.get_loc(num)
+        sheet_instance.update_cell(2, cl, ' '.join(all))
+
     else:
         df[num] = answer
 
         # save to csv file (updating the existing file)
         # df.to_csv(ansFileName, encoding='utf-8', index=False)
-        repository.update_file(
-            ansFileName, "Updating Answer", df.to_csv(sep=',', index=False))
+        # repository.update_file(
+        #     ansFileName, "Updating Answer", df.to_csv(sep=',', index=False))
+
+        # cl = df.columns.get_loc(num)
+        sheet_instance.insert_cols([[num, answer]], len(df.columns)+1)
+        # sheet_instance.update_cell(cl, 2, ' '.join(all))
 
 
 def updateTheUsers(userName, num):
@@ -114,8 +147,13 @@ def updateTheUsers(userName, num):
     userFileName = 'users.csv'
 
     # udf = pd.read_csv(userFileName)
-    file = repository.get_contents(userFileName)
-    udf = pd.read_csv(file.download_url)
+    # file = repository.get_contents(userFileName)
+    # udf = pd.read_csv(file.download_url)
+
+    sheet = client.open('users')
+    sheet_instance = sheet.get_worksheet(0)
+    records_data = sheet_instance.get_all_records()
+    udf = pd.DataFrame.from_dict(records_data)
 
     if userName in udf.columns:
         userChecked = str(udf[userName][0]).split(' ')
@@ -126,16 +164,22 @@ def updateTheUsers(userName, num):
 
         # save to csv file (updating the existing file)
         # udf.to_csv(userFileName, encoding='utf-8', index=False)
-        repository.update_file(
-            userFileName, "Updating User", udf.to_csv(sep=',', index=False))
+        # repository.update_file(
+        #     userFileName, "Updating User", udf.to_csv(sep=',', index=False))
+
+        cl = udf.columns.get_loc(userName)
+        sheet_instance.update_cell(2, cl, ' '.join(userChecked))
     else:
         # lets add the username
         udf[userName] = [num]
 
         # save to csv file (updating the existing file)
         # udf.to_csv(userFileName, encoding='utf-8', index=False)
-        repository.update_file(
-            userFileName, "Updating User", udf.to_csv(sep=',', index=False))
+        # repository.update_file(
+        #     userFileName, "Updating User", udf.to_csv(sep=',', index=False))
+
+        sheet_instance.insert_cols(
+            [[userName, ' '.join(userChecked)]], len(udf.columns)+1)
 
 
 def query_handler(update, context):
@@ -186,8 +230,13 @@ def checkIfQuestionFullyAnnotated(num):
     ansFileName = 'answers.csv'
 
     # df = pd.read_csv(ansFileName)
-    file = repository.get_contents(ansFileName)
-    df = pd.read_csv(file.download_url)
+    # file = repository.get_contents(ansFileName)
+    # df = pd.read_csv(file.download_url)
+
+    sheet = client.open('data')
+    sheet_instance = sheet.get_worksheet(0)
+    records_data = sheet_instance.get_all_records()
+    df = pd.DataFrame.from_dict(records_data)
 
     if num in df.columns:
         # check if full
@@ -207,13 +256,22 @@ def hate_speech(update, context):
     # userFileName = './data/users.csv'
     # dataFileName = './data/data.csv'
 
-    userFileName = 'users.csv'
-    file = repository.get_contents(userFileName)
-    udf = pd.read_csv(file.download_url)
+    # userFileName = 'users.csv'
+    # file = repository.get_contents(userFileName)
+    # udf = pd.read_csv(file.download_url)
+    sheet = client.open('users')
+    sheet_instance = sheet.get_worksheet(0)
+    records_data = sheet_instance.get_all_records()
+    udf = pd.DataFrame.from_dict(records_data)
 
-    dataFileName = 'data.csv'
-    file = repository.get_contents(dataFileName)
-    df = pd.read_csv(file.download_url)
+    # dataFileName = 'data.csv'
+    # file = repository.get_contents(dataFileName)
+    # df = pd.read_csv(file.download_url)
+
+    sheet_data = client.open('data')
+    sheet_instance_data = sheet_data.get_worksheet(0)
+    records_data2 = sheet_instance_data.get_all_records()
+    df = pd.DataFrame.from_dict(records_data2)
 
     # udf = pd.read_csv("./data/users.csv")
 

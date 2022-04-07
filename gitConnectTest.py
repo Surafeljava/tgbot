@@ -1,19 +1,19 @@
 from dotenv import load_dotenv
 import os
-from github import Github
+import dropbox
+
+import pandas as pd
 
 load_dotenv()
 
 API_KEY = os.getenv('API_KEY')
-GITHUB_TOKEN = os.getenv('GITHUB_TOKEN')
-REPO_NAME = os.getenv('REPO_NAME')
+DROPBOX_TOKEN = os.getenv('DROPBOX_TOKEN')
 
+dbx = dropbox.Dropbox(DROPBOX_TOKEN)
+filename = '/Amhbot/users.csv'
+# f, r = dbx.files_download(filename)
+url = dbx.files_get_temporary_link(filename)
 
-print(GITHUB_TOKEN)
-# github = Github(GITHUB_TOKEN)
-github = Github(GITHUB_TOKEN)
+df = pd.read_csv(url.link)
 
-# print(github)
-repository = github.get_user().get_repo(REPO_NAME)
-
-print(repository.owner)
+print(df.head())
