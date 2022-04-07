@@ -139,7 +139,7 @@ def updateTheAnswers(num, question, answer):
         #     ansFileName, "Updating Answer", df.to_csv(sep=',', index=False))
 
         # cl = df.columns.get_loc(num)
-        sheet_instance.insert_cols([[num-1, answer]], len(df.columns)+1)
+        sheet_instance.insert_cols([[num, answer]], len(df.columns))
         # sheet_instance.update_cell(cl, 2, ' '.join(all))
 
 
