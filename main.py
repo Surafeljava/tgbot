@@ -139,7 +139,7 @@ def updateTheAnswers(num, question, answer):
         #     ansFileName, "Updating Answer", df.to_csv(sep=',', index=False))
 
         # cl = df.columns.get_loc(num)
-        sheet_instance.insert_cols([[num, answer]], len(df.columns)+1)
+        sheet_instance.insert_cols([[num-1, answer]], len(df.columns)+1)
         # sheet_instance.update_cell(cl, 2, ' '.join(all))
 
 
@@ -297,7 +297,7 @@ def hate_speech(update, context):
         nxt = random.randint(0, len(data)-1)
 
     buttons = [[InlineKeyboardButton("Hate Speech", callback_data="hate")], [
-        InlineKeyboardButton("Not Hate Speech", callback_data="not_hate")]]
+        InlineKeyboardButton("Not Hate Speech", callback_data="not")]]
 
     context.bot.send_message(
         chat_id=update.effective_chat.id, reply_markup=InlineKeyboardMarkup(buttons), text=str(nxt) + ' ' + data[nxt],)
