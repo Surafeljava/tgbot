@@ -173,8 +173,15 @@ def updateTheUsers(userName, num):
 
         print(d)
 
+        vals = udf.columns.values.tolist()
+
+        ind = vals.index(userName) + 1
+
+        print(vals)
+        print(ind)
+
         cl = udf.columns.get_loc(userName)
-        sheet_instance.update_cell(2, cl, d)
+        sheet_instance.update_cell(2, ind, d)
     else:
         # lets add the username
         udf[userName] = [num]
