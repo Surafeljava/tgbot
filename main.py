@@ -164,13 +164,15 @@ def updateTheUsers(userName, num):
         userChecked.append(num)
         udf[userName] = ' '.join(userChecked)
 
+        d = ' '.join(userChecked)
+
         # save to csv file (updating the existing file)
         # udf.to_csv(userFileName, encoding='utf-8', index=False)
         # repository.update_file(
         #     userFileName, "Updating User", udf.to_csv(sep=',', index=False))
 
         cl = udf.columns.get_loc(userName)
-        sheet_instance.update_cell(2, cl, ' '.join(userChecked))
+        sheet_instance.update_cell(2, cl, d)
     else:
         # lets add the username
         udf[userName] = [num]
@@ -181,7 +183,7 @@ def updateTheUsers(userName, num):
         #     userFileName, "Updating User", udf.to_csv(sep=',', index=False))
 
         sheet_instance.insert_cols(
-            [[userName, ' '.join(userChecked)]], len(udf.columns)+1)
+            [[userName, num]], len(udf.columns)+1)
 
 
 def query_handler(update, context):
