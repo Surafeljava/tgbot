@@ -192,7 +192,7 @@ def updateTheUsers(userName, num):
         #     userFileName, "Updating User", udf.to_csv(sep=',', index=False))
 
         sheet_instance.insert_cols(
-            [[userName, num]], len(udf.columns)+1)
+            [[userName, num]], len(udf.columns))
 
 
 def query_handler(update, context):
